@@ -1,0 +1,11 @@
+# Wahldaten 2017
+
+GUI für die Darstellung von Wahldaten. Zur Zeit werden nur Daten aus vorangegangenen Wahlen zur Verfügung gestellt. Ab dem Wahltag selber sollen aber auch aktuelle Daten gezeigt werden.
+
+# Attribution
+
+
+
+# License
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons Lizenzvertrag" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />Dieses Werk ist lizenziert unter einer <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Namensnennung - Weitergabe unter gleichen Bedingungen 4.0 International Lizenz</a>.
