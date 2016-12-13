@@ -201,8 +201,7 @@ $.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/landtagswahlkreise?
 var markerClusters = new L.MarkerClusterGroup({
   spiderfyOnMaxZoom: true,
   showCoverageOnHover: false,
-  zoomToBoundsOnClick: true,
-  disableClusteringAtZoom: 16
+  zoomToBoundsOnClick: true
 });
 
 
