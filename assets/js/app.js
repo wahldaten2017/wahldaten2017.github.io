@@ -109,10 +109,19 @@ function syncSidebar() {
   });
 }
 
+/* Offene Daten Köln */
+var attr = '<h4>Attribution</h4><a href=\'https://github.com/bmcbride/bootleaf\' target=\'_blank\'>Bootleaf</a> by <a href=\'http://bryanmcbride.com\'>bryanmcbride.com</a>, '
+		+ '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>, '
+		+ '<a href=\'http://www.offenedaten-koeln.de/\' target=\'_blank\'>Offene Daten K&ouml;ln</a>, '
+		+ '<a href=\'http://getbootstrap.com/\' target=\'_blank\'>Bootstrap 3</a>, <a href=\'http://leafletjs.com/\' target=\'_blank\'>Leaflet</a>, '
+		+ '<a href=\'https://www.datatables.net\' target=\'_blank\'>DataTables</a>, '
+		+ '<a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">leaflet marker cluster plugin</a>, '
+		+ '<a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>, ';
+
 /* Basemap Layers */
 var cartoLight = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
   maxZoom: 19,
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
+  attribution: attr
 });
 
 /* Overlay Layers */
@@ -291,10 +300,10 @@ map.on("layerremove", updateAttribution);
 var attributionControl = L.control({
   position: "bottomright"
 });
-attributionControl.onAdd = function (map) {
-  var div = L.DomUtil.create("div", "leaflet-control-attribution");
-  div.innerHTML = "<span class='hidden-xs'>Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
-  return div;
+attributionControl.onAdd = function(map) {
+	var div = L.DomUtil.create("div", "leaflet-control-attribution");
+	div.innerHTML = "<span class='hidden-xs'>Developed by <a href='https://github.com/weberius' target='_blank'>Wolfram Eberius</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
+	return div;
 };
 map.addControl(attributionControl);
 
