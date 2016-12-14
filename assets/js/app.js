@@ -136,8 +136,10 @@ var highlightStyle = {
 var boroughs = L.geoJson(null, {
   style: function (feature) {
     return {
-      color: "black",
-      fill: false,
+      fillColor: 'grey',
+      color: 'white',
+      fill: true,
+      weight: 1,
       opacity: 1,
       clickable: false
     };
@@ -158,8 +160,9 @@ $.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/stimmbezirke?geojso
 var lwkreis = L.geoJson(null, {
   style: function (feature) {
       return {
-        color: "#aaaaaa",
-        weight: 3,
+        color: 'white',
+        weight: 5,
+        fill: false,
         opacity: 1,
         clickable: false
       };
@@ -256,7 +259,8 @@ $.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/wahllokale?geojson"
 map = L.map("map", {
   zoom: 10,
   center: [50.94135, 6.95819],
-  layers: [cartoLight, boroughs, markerClusters, highlight],
+//  layers: [cartoLight, boroughs, markerClusters, highlight],
+  layers: [cartoLight, markerClusters, highlight],
   zoomControl: false,
   attributionControl: false
 });
