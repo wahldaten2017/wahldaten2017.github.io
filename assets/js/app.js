@@ -332,7 +332,7 @@ var locateControl = L.control.locate({
     clickable: false
   },
   icon: "fa fa-location-arrow",
-  metric: false,
+  metric: true,
   strings: {
     title: "My location",
     popup: "You are within {distance} {unit} from this point",
@@ -346,6 +346,7 @@ var locateControl = L.control.locate({
     timeout: 10000
   }
 }).addTo(map);
+
 
 /* Larger screens get expanded layer control and visible sidebar */
 if (document.body.clientWidth <= 767) {
@@ -476,3 +477,44 @@ if (!L.Browser.touch) {
 } else {
   L.DomEvent.disableClickPropagation(container);
 }
+
+function onMapClick(e) {
+	var stimmbezirk = 0;
+	var content = '';
+	var featureTitle = '';
+	$.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/stimmbezirk/" + e.latlng.lng + "/" + e.latlng.lat, function (data) {
+		stimmbezirk = data[0].nummer;
+		featureTitle = data[0].stt;
+		//content = JSON.stringify(data);
+	}).success(function(data) {
+		console.log( "success: " + JSON.stringify(data) );
+
+		$.getJSON("https://tom.cologne.codefor.de/wahlergebnis/service/landtagswahl/05/05315000/2012-05-13/" + stimmbezirk, function (wahlergebnis) {
+			// {"art":"landtagswahl","bundesland":"05","gemeinde":"05315000","datum":"2012-05-13",
+			// "stimmbezirke":[{"nr":30319,"wahlberechtigt":641,"abgegeben":473,"gueltig":471,"ungueltig":2,
+			// "ergebnisse":[{"partei":"SPD","stimmen":121},{"partei":"CDU","stimmen":235},{"partei":"FDP","stimmen":42},{"partei":"GRÜNE","stimmen":51},{"partei":"DIE LINKE","stimmen":5},{"partei":"Sonstige","stimmen":17}]}]}
+			console.log( "success: " + JSON.stringify(wahlergebnis) );
+			//content = JSON.stringify(wahlergebnis);
+			featureTitle += "&nbsp;-&nbsp;Stimmbezirk&nbsp;" + wahlergebnis.stimmbezirke[0].nr;
+			content = "<table>"
+				+ "<tr><th colspan='2'>Wahlbeteiligung</th></tr>"
+				+ "<tr><td>wahlberechtigt</td><td>" + wahlergebnis.stimmbezirke[0].wahlberechtigt + "</td></tr>"
+				+ "<tr><td>abgegeben</td><td>" + wahlergebnis.stimmbezirke[0].abgegeben + "</td></tr>"
+				+ "<tr><td>gueltig</td><td>" + wahlergebnis.stimmbezirke[0].gueltig + "</td></tr>"
+				+ "<tr><td>ungueltig</td><td>" + wahlergebnis.stimmbezirke[0].ungueltig + "</td></tr>"
+				+ "<tr><th colspan='2'>Wahlergebnis</th></tr>"
+				for (var i = 0; i < wahlergebnis.stimmbezirke[0].ergebnisse.length; i++) {
+					+ "<tr><td>" + wahlergebnis.stimmbezirke[0].ergebnisse[i].partei + "</td><td>" + wahlergebnis.stimmbezirke[0].ergebnisse[i].stimmen + "</td></tr>"
+				}
+				+ "</table>";
+			$("#feature-title").html(featureTitle);
+		    $("#feature-info").html(content);
+		    $("#featureModal").modal("show");
+		});
+
+	});
+}
+
+
+
+map.on('click', onMapClick);
