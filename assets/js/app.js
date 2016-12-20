@@ -1,4 +1,4 @@
-var map, featureList, boroughSearch = [], wahllokalSearch = [];
+var map, featureList, wahllokalSearch = [];
 
 $(window).resize(function() {
   sizeLayerControl();
@@ -24,7 +24,7 @@ $("#about-btn").click(function() {
 });
 
 $("#full-extent-btn").click(function() {
-  map.fitBounds(boroughs.getBounds());
+  map.fitBounds(wahllokals.getBounds());
   $(".navbar-collapse.in").collapse("hide");
   return false;
 });
@@ -95,7 +95,7 @@ function syncSidebar() {
   wahllokals.eachLayer(function (layer) {
     if (map.hasLayer(wahllokalLayer)) {
       if (map.getBounds().contains(layer.getLatLng())) {
-    	var body = '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.WLK_NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>';
+    	var body = '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"></td><td class="feature-name">' + layer.feature.properties.WLK_NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>';
         $("#feature-list tbody").append(body);
       }
     }
@@ -133,74 +133,6 @@ var highlightStyle = {
   radius: 10
 };
 
-var boroughs = L.geoJson(null, {
-  style: function (feature) {
-    return {
-      fillColor: 'grey',
-      color: 'white',
-      fill: true,
-      weight: 1,
-      opacity: 1,
-      clickable: false
-    };
-  },
-  onEachFeature: function (feature, layer) {
-    boroughSearch.push({
-      name: layer.feature.id + " " + layer.feature.properties.stadtteil,
-      source: "Boroughs",
-      id: L.stamp(layer),
-      bounds: layer.getBounds()
-    });
-  }
-});
-$.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/stimmbezirke?geojson", function (data) {
-  boroughs.addData(data);
-});
-
-var lwkreis = L.geoJson(null, {
-  style: function (feature) {
-      return {
-        color: 'white',
-        weight: 5,
-        fill: false,
-        opacity: 1,
-        clickable: false
-      };
-  },
-  onEachFeature: function (feature, layer) {
-    if (feature.properties) {
-      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Landtagswahlkreis</th><td>&nbsp;" + feature.properties.bezeichnung + "</td></tr>" 
-        + "<table>";
-      layer.on({
-        click: function (e) {
-          $("#feature-title").html(feature.properties.Line);
-          $("#feature-info").html(content);
-          $("#featureModal").modal("show");
-        }
-      });
-    }
-    layer.on({
-      mouseover: function (e) {
-        var layer = e.target;
-        layer.setStyle({
-          weight: 1,
-          color: "#00FFFF",
-          opacity: 1
-        });
-        if (!L.Browser.ie && !L.Browser.opera) {
-          layer.bringToFront();
-        }
-      },
-      mouseout: function (e) {
-        lwkreis.resetStyle(e.target);
-      }
-    });
-  }
-});
-$.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/landtagswahlkreise?geojson", function (data) {
-  lwkreis.addData(data);
-});
-
 /* Single marker cluster layer to hold all clusters */
 var markerClusters = new L.MarkerClusterGroup({
   spiderfyOnMaxZoom: true,
@@ -214,12 +146,6 @@ var wahllokalLayer = L.geoJson(null);
 var wahllokals = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
     return L.marker(latlng, {
-      icon: L.icon({
-        iconUrl: "assets/img/museum.png",
-        iconSize: [24, 28],
-        iconAnchor: [12, 28],
-        popupAnchor: [0, -25]
-      }),
       title: feature.properties.NAME,
       riseOnHover: true
     });
@@ -240,7 +166,7 @@ var wahllokals = L.geoJson(null, {
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
-      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.WLK_NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"></td><td class="feature-name">' + layer.feature.properties.WLK_NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       wahllokalSearch.push({
         name: layer.feature.properties.WLK_NAME,
         address: layer.feature.properties.WLK_ADRESSE,
@@ -254,12 +180,12 @@ var wahllokals = L.geoJson(null, {
 });
 $.getJSON("https://tom.cologne.codefor.de/wahlgebiet/service/wahllokale?geojson", function (data) {
   wahllokals.addData(data);
+  map.addLayer(wahllokalLayer);
 });
 
 map = L.map("map", {
   zoom: 10,
   center: [50.94135, 6.95819],
-//  layers: [cartoLight, boroughs, markerClusters, highlight],
   layers: [cartoLight, markerClusters, highlight],
   zoomControl: false,
   attributionControl: false
@@ -361,11 +287,7 @@ var baseLayers = {
 
 var groupedOverlays = {
   "Points of Interest": {
-    "<img src='assets/img/museum.png' width='24' height='28'>&nbsp;Wahllokale": wahllokalLayer
-  },
-  "Reference": {
-    "Stimmbezirke": boroughs,
-    "Landtagswahlkreise": lwkreis
+    "Wahllokale": wahllokalLayer
   }
 };
 
@@ -393,20 +315,8 @@ $("#featureModal").on("hidden.bs.modal", function (e) {
 $(document).one("ajaxStop", function () {
   $("#loading").hide();
   sizeLayerControl();
-  /* Fit map to boroughs bounds */
-  map.fitBounds(boroughs.getBounds());
   featureList = new List("features", {valueNames: ["feature-name"]});
   featureList.sort("feature-name", {order:"asc"});
-
-  var boroughsBH = new Bloodhound({
-    name: "Boroughs",
-    datumTokenizer: function (d) {
-      return Bloodhound.tokenizers.whitespace(d.name);
-    },
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    local: boroughSearch,
-    limit: 10
-  });
 
   var wahllokalsBH = new Bloodhound({
     name: "Wahllokale",
@@ -418,7 +328,6 @@ $(document).one("ajaxStop", function () {
     limit: 10
   });
 
-  boroughsBH.initialize();
   wahllokalsBH.initialize();
 
   /* instantiate the typeahead UI */
@@ -427,24 +336,14 @@ $(document).one("ajaxStop", function () {
     highlight: true,
     hint: false
   }, {
-    name: "Boroughs",
-    displayKey: "name",
-    source: boroughsBH.ttAdapter(),
-    templates: {
-      header: "<h4 class='typeahead-header'>Boroughs</h4>"
-    }
-  }, {
     name: "Wahllokale",
     displayKey: "name",
     source: wahllokalsBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='assets/img/museum.png' width='24' height='28'>&nbsp;Wahllokale</h4>",
+      header: "<h4 class='typeahead-header'>Wahllokale</h4>",
       suggestion: Handlebars.compile(["{{WLK_NAME}}<br>&nbsp;<small>{{WLK_ADRESSE}}</small>"].join(""))
     }
   }).on("typeahead:selected", function (obj, datum) {
-    if (datum.source === "Boroughs") {
-      map.fitBounds(datum.bounds);
-    }
     if (datum.source === "Wahllokale") {
       if (!map.hasLayer(wahllokalLayer)) {
         map.addLayer(wahllokalLayer);
@@ -494,7 +393,7 @@ function onMapClick(e) {
 			console.log( "success: " + JSON.stringify(wahlergebnis) );
 			//content = JSON.stringify(wahlergebnis);
 			featureTitle += "&nbsp;-&nbsp;Stimmbezirk&nbsp;" + wahlergebnis.stimmbezirke[0].nr;
-
+2
       
       for (var i = 0; i < wahlergebnis.stimmbezirke[0].ergebnisse.length; i++) {
           ergebnis += "<tr><td>" + wahlergebnis.stimmbezirke[0].ergebnisse[i].partei 
@@ -525,7 +424,5 @@ function onMapClick(e) {
 
 	});
 }
-
-
 
 map.on('click', onMapClick);
