@@ -389,7 +389,7 @@ function onMapClick(e) {
 	}).success(function(data) {
 		console.log( "success: " + JSON.stringify(data) );
 
-		$.getJSON("https://tom.cologne.codefor.de/wahlergebnis/service/landtagswahl/05/05315000/2012-05-13/" + stimmbezirk, function (wahlergebnis) {
+		$.getJSON("https://tom.cologne.codefor.de/wahlergebnis/service/landtagswahl/05/05315000/2012-05-13/" + stimmbezirk + "/erststimmen", function (wahlergebnis) {
 			console.log( "success: " + JSON.stringify(wahlergebnis) );
 			//content = JSON.stringify(wahlergebnis);
 			featureTitle += "&nbsp;-&nbsp;Stimmbezirk&nbsp;" + wahlergebnis.stimmbezirke[0].nr;
