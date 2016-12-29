@@ -389,11 +389,10 @@ function onMapClick(e) {
 	}).success(function(data) {
 		console.log( "success: " + JSON.stringify(data) );
 
-		$.getJSON("https://tom.cologne.codefor.de/wahlergebnis/service/landtagswahl/05/05315000/2012-05-13/" + stimmbezirk + "/erststimmen", function (wahlergebnis) {
+		$.getJSON("https://tom.cologne.codefor.de/wahlergebnis/service/landtagswahl/05/05315000/2012-05-13/erststimmen/" + stimmbezirk + "", function (wahlergebnis) {
 			console.log( "success: " + JSON.stringify(wahlergebnis) );
 			//content = JSON.stringify(wahlergebnis);
 			featureTitle += "&nbsp;-&nbsp;Stimmbezirk&nbsp;" + wahlergebnis.stimmbezirke[0].nr;
-2
       
       for (var i = 0; i < wahlergebnis.stimmbezirke[0].ergebnisse.length; i++) {
           ergebnis += "<tr><td>" + wahlergebnis.stimmbezirke[0].ergebnisse[i].partei 
