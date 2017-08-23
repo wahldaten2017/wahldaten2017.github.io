@@ -93,13 +93,16 @@ function syncSidebar() {
   $("#feature-list tbody").empty();
   /* Loop through wahllokals layer and add only features which are in the map bounds */
   wahllokals.eachLayer(function (layer) {
-    if (map.hasLayer(wahllokalLayer)) {
-      if (map.getBounds().contains(layer.getLatLng())) {
-    	var body = '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"></td><td class="feature-name">' + layer.feature.properties.WLK_NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>';
-        $("#feature-list tbody").append(body);
-      }
-    }
-  });
+	    if (map.hasLayer(wahllokalLayer)) {
+	        if (map.getBounds().contains(layer.getLatLng())) {
+	      	var body = '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">'
+	  			+ '<td style="vertical-align: middle;"></td>'
+	  			+ '<td class="feature-name"><b>Stimmbezirk ' + layer.feature.id + '</b></br>' + layer.feature.properties.WLK_NAME + '</td>'
+	  			+ '<td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>';
+	          $("#feature-list tbody").append(body);
+	        }
+	      }
+	    });
   /* Update list.js featureList */
   featureList = new List("features", {
     valueNames: ["feature-name"]
@@ -168,13 +171,15 @@ var wahllokals = L.geoJson(null, {
       });
       $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"></td><td class="feature-name">' + layer.feature.properties.WLK_NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       wahllokalSearch.push({
-        name: layer.feature.properties.WLK_NAME,
-        address: layer.feature.properties.WLK_ADRESSE,
-        source: "Wahllokale",
-        id: L.stamp(layer),
-        lat: layer.feature.geometry.coordinates[1],
-        lng: layer.feature.geometry.coordinates[0]
-      });
+  		  name: layer.feature.id,
+          wahllokal: layer.feature.properties.WLK_NAME,
+          address: layer.feature.properties.WLK_ADRESSE,
+  		  plz: layer.feature.properties.POSTZUSTELLBEZIRK,
+          source: "Wahllokale",
+          id: L.stamp(layer),
+          lat: layer.feature.geometry.coordinates[1],
+          lng: layer.feature.geometry.coordinates[0]
+        });
     }
   }
 });
@@ -321,7 +326,7 @@ $(document).one("ajaxStop", function () {
   var wahllokalsBH = new Bloodhound({
     name: "Wahllokale",
     datumTokenizer: function (d) {
-      return Bloodhound.tokenizers.whitespace(d.WLK_NAME);
+      return Bloodhound.tokenizers.whitespace(d.name);
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     local: wahllokalSearch,
